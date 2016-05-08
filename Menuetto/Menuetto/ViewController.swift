@@ -11,13 +11,16 @@ public class ViewController: UIViewController {
 
     private var objects: [MenuObject] = []
 
+    private let itemSizingCell = ItemCell()
+    private var itemSizingCellConstraint: NSLayoutConstraint!
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor(0xfcf5d8)
 
         layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsetsMake(60, 0, 0, 0)
-        layout.itemSize = CGSize(width: 100, height: 100)
+        layout.itemSize = CGSize(width: 100, height: 44)
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
 
@@ -44,6 +47,9 @@ public class ViewController: UIViewController {
                 objects.append(item)
             }
         }
+
+        itemSizingCellConstraint = itemSizingCell.widthAnchor.constraintGreaterThanOrEqualToConstant(320)
+        itemSizingCellConstraint.active = true
     }
 
     public override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
@@ -71,12 +77,17 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate, 
         } else if let item = obj as? Item {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("item", forIndexPath: indexPath) as! ItemCell
 //            cell.backgroundColor = UIColor.redColor()
-            cell.titleLabel.text = item.title
+            configureCell(cell, forItem: item)
             return cell
 
         } else {
             fatalError()
         }
+    }
+
+    private func configureCell(cell: ItemCell, forItem item: Item) {
+        cell.titleLabel.text = item.title
+        cell.priceLabel.text = item.price
     }
 
     public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
@@ -85,8 +96,12 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate, 
         if obj is Section {
             return CGSize(width: collectionView.bounds.width, height: 50)
 
-        } else if obj is Item {
-            return CGSize(width: collectionView.bounds.width, height: 50)
+        } else if let item = obj as? Item {
+            configureCell(itemSizingCell, forItem: item)
+
+            itemSizingCellConstraint.constant = view.bounds.width
+            let size = itemSizingCell.systemLayoutSizeFittingSize(CGSizeMake(view.bounds.width, 0))
+            return CGSize(width: view.bounds.width, height: size.height)
 
         } else {
             fatalError()
@@ -108,7 +123,7 @@ public class SectionCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = UIColor(0xae1916)
         label.textAlignment = .Center
-        label.font = UIFont(name: "AmericanTypewriter", size: 17)!
+        label.font = UIFont(name: "AmericanTypewriter-Bold", size: 17)!
         self.addSubview(label)
 
         NSLayoutConstraint.activateConstraints([
@@ -127,23 +142,49 @@ public class SectionCell: UICollectionViewCell {
 public class ItemCell: UICollectionViewCell {
 
     private var titleLabel = UILabel()
+    private var priceLabel = UILabel()
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
+
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.textColor = UIColor.blackColor()
         titleLabel.font = UIFont(name: "AmericanTypewriter", size: 15)!
+        titleLabel.numberOfLines = 0
         self.addSubview(titleLabel)
 
+        priceLabel.translatesAutoresizingMaskIntoConstraints = false
+        priceLabel.textColor = UIColor.blackColor()
+        priceLabel.font = UIFont(name: "AmericanTypewriter-Bold", size: 15)!
+        priceLabel.textAlignment = .Right
+        self.addSubview(priceLabel)
+
         NSLayoutConstraint.activateConstraints([
+//            self.heightAnchor.constraintGreaterThanOrEqualToConstant(44),
+
             titleLabel.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: sidePadding),
-            titleLabel.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -sidePadding),
-            titleLabel.centerYAnchor.constraintEqualToAnchor(self.centerYAnchor),
+            titleLabel.rightAnchor.constraintEqualToAnchor(priceLabel.leftAnchor, constant: -15),
+//            titleLabel.centerYAnchor.constraintEqualToAnchor(self.centerYAnchor),
+            titleLabel.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 10),
+            titleLabel.bottomAnchor.constraintEqualToAnchor(self.bottomAnchor, constant: -10),
+
+            priceLabel.widthAnchor.constraintEqualToConstant(150),
+            priceLabel.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -sidePadding),
+            priceLabel.centerYAnchor.constraintEqualToAnchor(self.centerYAnchor),
         ])
     }
 
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+//    private var cachedWidth: CGFloat?
+
+//    public override func preferredLayoutAttributesFittingAttributes(layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+//        let attrs = super.preferredLayoutAttributesFittingAttributes(layoutAttributes)
+//////        attrs.frame.size.width = super.bounds.width
+////        attrs.size.width = 320 //super.bounds.width
+//        return attrs
+//    }
 
 }
