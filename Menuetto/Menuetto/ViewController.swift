@@ -71,7 +71,7 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate, 
         } else if let item = obj as? Item {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("item", forIndexPath: indexPath) as! ItemCell
 //            cell.backgroundColor = UIColor.redColor()
-            cell.label.text = item.name
+            cell.titleLabel.text = item.title
             return cell
 
         } else {
@@ -126,19 +126,19 @@ public class SectionCell: UICollectionViewCell {
 
 public class ItemCell: UICollectionViewCell {
 
-    private var label = UILabel()
+    private var titleLabel = UILabel()
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = UIColor.blackColor()
-        label.font = UIFont(name: "AmericanTypewriter", size: 15)!
-        self.addSubview(label)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.textColor = UIColor.blackColor()
+        titleLabel.font = UIFont(name: "AmericanTypewriter", size: 15)!
+        self.addSubview(titleLabel)
 
         NSLayoutConstraint.activateConstraints([
-            label.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: sidePadding),
-            label.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -sidePadding),
-            label.centerYAnchor.constraintEqualToAnchor(self.centerYAnchor),
+            titleLabel.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: sidePadding),
+            titleLabel.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -sidePadding),
+            titleLabel.centerYAnchor.constraintEqualToAnchor(self.centerYAnchor),
         ])
     }
 

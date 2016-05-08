@@ -30,11 +30,11 @@ public class Section: MenuObject {
 
 public class Item: MenuObject {
 
-    public let name: String
+    public let title: String
     public let price: String
 
     public init(raw: JSONObject) {
-        name = raw["name"]~~~ ?? ""
+        title = raw["title"]~~~ ?? ""
         price = raw["price"]~~~ ?? ""
     }
 
